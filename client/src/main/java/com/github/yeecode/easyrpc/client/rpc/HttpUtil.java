@@ -14,6 +14,9 @@ import org.apache.http.util.EntityUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 发送远程调用请求：基于HTTP POST 和 JSON 序列化
+ */
 public class HttpUtil {
 
     public static synchronized Result callRemoteService(String identifier, String methodName, String argTypes, String argValues) {

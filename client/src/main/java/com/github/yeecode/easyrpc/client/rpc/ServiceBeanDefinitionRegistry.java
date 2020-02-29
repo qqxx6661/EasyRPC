@@ -24,7 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * 为接口注入实现类
+ * 为远程调用的Service接口注入实现类
  */
 @Component
 public class ServiceBeanDefinitionRegistry implements BeanDefinitionRegistryPostProcessor, ResourceLoaderAware, ApplicationContextAware {
@@ -33,16 +33,28 @@ public class ServiceBeanDefinitionRegistry implements BeanDefinitionRegistryPost
     private MetadataReaderFactory metadataReaderFactory;
     private ResourcePatternResolver resourcePatternResolver;
 
+    /**
+     * 通过BeanDefinitionRegistryPostProcessor自定义注入Bean：比如读取某个配置项，然后根据配置项动态生成bean
+     * @param registry
+     * @throws BeansException
+     */
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
+        // 扫描com.github.yeecode.easyrpc.client.remoteservice包中的Service类
         Set<Class<?>> clazzSet = scannerPackages("com.github.yeecode.easyrpc.client.remoteservice");
         clazzSet.stream().filter(Class::isInterface).forEach(x -> registerBean(registry, x));
     }
 
+    /**
+     * 自定义注册Bean：将ServiceFactory注入Service类
+     * @param registry
+     * @param clazz
+     */
     private void registerBean(BeanDefinitionRegistry registry, Class clazz) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(clazz);
         GenericBeanDefinition definition = (GenericBeanDefinition) builder.getRawBeanDefinition();
         definition.getConstructorArgumentValues().addGenericArgumentValue(clazz);
+        // 将该类的实现丢给ServiceFactory
         definition.setBeanClass(ServiceFactory.class);
         definition.setAutowireMode(GenericBeanDefinition.AUTOWIRE_BY_TYPE);
         registry.registerBeanDefinition(clazz.getSimpleName(), definition);

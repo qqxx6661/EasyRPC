@@ -5,6 +5,10 @@ import org.springframework.beans.factory.FactoryBean;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
+/**
+ * Service工厂
+ * @param <T>
+ */
 public class ServiceFactory<T> implements FactoryBean<T> {
 
     private Class<T> interfaceType;
@@ -13,6 +17,10 @@ public class ServiceFactory<T> implements FactoryBean<T> {
         this.interfaceType = interfaceType;
     }
 
+    /**
+     * 在Service初始化时使用ServiceProxy的实现
+     * @return
+     */
     @Override
     public T getObject() {
         InvocationHandler handler = new ServiceProxy<>(interfaceType);

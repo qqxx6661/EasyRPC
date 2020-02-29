@@ -1,6 +1,10 @@
 package com.github.yeecode.easyrpc.client.rpc;
 
+/**
+ * 返回结果封装
+ */
 public class Result {
+
     private Boolean success;
     private String message;
     private String resultType;
